@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob
+  namespace: demo-namespace
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronimage
+            image: cronjob:latest
+            imagePullPolicy: Never
+            command: ["/bin/sh"]
+            args:
+              - -c
+              - /app/script.sh FromCron
+            volumeMounts:
+              - mountPath: /log
+                name: cron-vol
+          restartPolicy: Never
+          volumes:
+            - name: cron-vol
+              hostPath:
+                path: /Users/pl465j/projects/KubernetesCron/log
+                type: DirectoryOrCreate
